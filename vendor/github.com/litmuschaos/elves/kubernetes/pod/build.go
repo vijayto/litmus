@@ -137,7 +137,7 @@ func (b *Builder) Build() (*corev1.Pod, error) {
 }
 
 
-// WithLabels sets the labels field of Pod with provided value
+// With Annotations -> sets the annotation field of Pod with provided value
 func (b *Builder) WithAnnotations(annotations map[string]string) *Builder {
 	if len(annotations) == 0 {
 		b.errs = append(

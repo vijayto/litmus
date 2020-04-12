@@ -43,13 +43,9 @@ type ChaosEngineSpec struct {
 	//AuxiliaryAppInfo contains details of dependent applications (infra chaos)
 	AuxiliaryAppInfo string `json:"auxiliaryAppInfo,omitempty"`
 	//EngineStatus is a requirement for validation
-<<<<<<< Updated upstream
 	EngineState EngineState `json:"engineState"`
-=======
-	EngineState string `json:"engineState"`
 	// Annotations that needs to be provided in the pod for pod that is getting created
 	AppAnnotations ApplicationAnnotations `json:"appanotation"`
->>>>>>> Stashed changes
 }
 
 // EngineState provides interface for all supported strings in spec.EngineState
@@ -118,17 +114,13 @@ type ApplicationParams struct {
 	AppKind string `json:"appkind"`
 }
 
-<<<<<<< Updated upstream
-// ComponentParams defines information about the runner
-=======
 // Annotations that might be required for a custom application
 type ApplicationAnnotations struct {
-	 AppAnnotationName string `json:"appanotation"`
-	 AppAnnotationValue string `json:"appannotationvalue"`
+	AppAnnotationName string `json:"appanotation"`
+	AppAnnotationValue string `json:"appannotationvalue"`
 }
 
 // ComponentParams defines information about the runner and monitor image
->>>>>>> Stashed changes
 type ComponentParams struct {
 	//Contains informations of the the runner pod
 	Runner RunnerInfo `json:"runner"`

@@ -240,6 +240,7 @@ func newGoRunnerPodForCR(engine *chaosTypes.EngineInfo) (*corev1.Pod, error) {
 		containerForRunner.WithCommandNew(engine.Instance.Spec.Components.Runner.Command)
 	}
 
+	// Proposed changes: Vijay Thomas - Intuit
 	return pod.NewBuilder().
 		WithName(engine.Instance.Name + "-runner").
 		WithAnnotations(map[string]string{engine.Instance.Spec.AppAnnotations.AppAnnotationName:
