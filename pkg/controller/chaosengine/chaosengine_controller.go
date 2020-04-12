@@ -242,6 +242,8 @@ func newGoRunnerPodForCR(engine *chaosTypes.EngineInfo) (*corev1.Pod, error) {
 
 	return pod.NewBuilder().
 		WithName(engine.Instance.Name + "-runner").
+		WithAnnotations(map[string]string{engine.Instance.Spec.AppAnnotations.AppAnnotationName:
+			engine.Instance.Spec.AppAnnotations.AppAnnotationValue}).
 		WithNamespace(engine.Instance.Namespace).
 		WithLabels(map[string]string{"app": engine.Instance.Name, "chaosUID": string(engine.Instance.UID)}).
 		WithServiceAccountName(engine.Instance.Spec.ChaosServiceAccount).
