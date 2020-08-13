@@ -1,150 +1,99 @@
-# Litmus chaos-operator for injecting chaos experiments on Kubernetes
+<img alt="LitmusChaos" src="https://landscape.cncf.io/logos/litmus.svg" width="200" align="left">
 
-[![Codacy Badge](https://api.codacy.com/project/badge/Grade/2597079b1b5240d3866a6deb4112a2f2)](https://www.codacy.com/manual/litmuschaos/chaos-operator?utm_source=github.com&amp;utm_medium=referral&amp;utm_content=litmuschaos/chaos-operator&amp;utm_campaign=Badge_Grade)
-[![Go Report Card](https://goreportcard.com/badge/github.com/litmuschaos/chaos-operator)](https://goreportcard.com/report/github.com/litmuschaos/chaos-operator)
-[![BCH compliance](https://bettercodehub.com/edge/badge/litmuschaos/chaos-operator?branch=master)](https://bettercodehub.com/)
-[![FOSSA Status](https://app.fossa.io/api/projects/git%2Bgithub.com%2Flitmuschaos%2Fchaos-operator.svg?type=shield)](https://app.fossa.io/projects/git%2Bgithub.com%2Flitmuschaos%2Fchaos-operator?ref=badge_shield)
-[![codecov](https://codecov.io/gh/litmuschaos/chaos-operator/branch/master/graph/badge.svg)](https://codecov.io/gh/litmuschaos/chaos-operator)
-  
-Litmus chaos operator is used by Kubernetes application developers and SREs to inject chaos into the applications 
-and Kubernetes infrastructure in a managed fashion. Its objective is to make the process of validation and 
-hardening of application workloads on Kubernetes easy by automating the execution of chaos experiments. A sample chaos 
-injection workflow could be as simple as:
+# Litmus
+### Cloud-Native Chaos Engineering
 
-- Install the Litmus infrastructure components (RBAC, CRDs), the Operator & Experiment custom resource bundles via the operator manifest
-- Annotate the application under test (AUT), enabling it for chaos
-- Create a ChaosEngine custom resource tied to the AUT, which describes the experiment to be executed 
+[![Slack Channel](https://img.shields.io/badge/Slack-Join-purple)](https://slack.litmuschaos.io)
+[![Build Status](https://travis-ci.org/litmuschaos/litmus.svg?branch=master)](https://travis-ci.org/litmuschaos/litmus)
+[![Docker Pulls](https://img.shields.io/docker/pulls/litmuschaos/ansible-runner.svg)](https://hub.docker.com/r/litmuschaos/ansible-runner)
+[![GitHub stars](https://img.shields.io/github/stars/litmuschaos/litmus?style=social)](https://github.com/litmuschaos/litmus/stargazers)
+[![GitHub issues](https://img.shields.io/github/issues/litmuschaos/litmus)](https://github.com/litmuschaos/litmus/issues)
+[![Twitter Follow](https://img.shields.io/twitter/follow/litmuschaos?style=social)](https://twitter.com/LitmusChaos)
+[![CII Best Practices](https://bestpractices.coreinfrastructure.org/projects/3202/badge)](https://bestpractices.coreinfrastructure.org/projects/3202)
+[![Quality Gate Status](https://sonarcloud.io/api/project_badges/measure?project=litmuschaos_litmus&metric=alert_status)](https://sonarcloud.io/dashboard?id=litmuschaos_litmus)
+[![BCH compliance](https://bettercodehub.com/edge/badge/litmuschaos/litmus?branch=master)](https://bettercodehub.com/)
+[![FOSSA Status](https://app.fossa.io/api/projects/git%2Bgithub.com%2Flitmuschaos%2Flitmus.svg?type=shield)](https://app.fossa.io/projects/git%2Bgithub.com%2Flitmuschaos%2Flitmus?ref=badge_shield)
+[![YouTube Channel](https://img.shields.io/badge/YouTube-Subscribe-red)](https://www.youtube.com/channel/UCa57PMqmz_j0wnteRa9nCaw)
+<br><br><br><br>
 
-Benefits provided by the Chaos Operator include: 
+## Overview
 
-- Standardised chaos experiment spec 
-- Categorized chaos bundles for stateless/stateful/vendor-specific
-- Test-Run resiliency 
-- Ability to chaos run as a background service based on annotations
+Litmus is a toolset to do cloud-native chaos engineering. Litmus provides tools to orchestrate chaos on Kubernetes to help SREs find weaknesses in their deployments. SREs use Litmus to run chaos experiments initially in the staging environment and eventually in production to find bugs, vulnerabilities. Fixing the weaknesses leads to increased resilience of the system.
 
-## What is a chaos operator and how is it built?
+Litmus takes a cloud-native approach to create, manage and monitor chaos. Chaos is orchestrated using the following Kubernetes Custom Resource Definitions (**CRDs**):
 
-The Chaos Operator is a Kubernetes Operator, which are nothing but custom-controllers with direct access to Kubernetes API
-that can manage the lifecycle of certain resources or applications, while always trying to ensure the resource is in the "desired
-state". The logic that ensures this is commonly called "reconcile" function.
+- **ChaosEngine**: A resource to link a Kubernetes application or Kubernetes node to a ChaosExperiment. ChaosEngine is watched by Litmus' Chaos-Operator which then invokes Chaos-Experiments
+- **ChaosExperiment**: A resource to group the configuration parameters of a chaos experiment. ChaosExperiment CRs are created by the operator when experiments are invoked by ChaosEngine.
+- **ChaosResult**: A resource to hold the results of a chaos-experiment. The Chaos-exporter reads the results and exports the metrics into a configured Prometheus server.
 
-The Chaos Operator is built using the popular [Operator-SDK](https://github.com/operator-framework/operator-sdk/) framework, 
-which provides bootstrap support for new operator projects, allowing teams to focus on business/operational logic. 
+Chaos experiments are hosted on <a href="https://hub.litmuschaos.io" target="_blank">hub.litmuschaos.io</a>. It is a central hub where the application developers or vendors share their chaos experiments so that their users can use them to increase the resilience of the applications in production.
 
-The Litmus Chaos Operator helps reconcile the state of the ChaosEngine, a custom resource that holds the chaos intent 
-specified by a developer/devops engineer against a particular stateless/stateful Kubernetes deployment. The operator performs
-specific actions upon CRUD of the ChaosEngine, its primary resource. The operator also defines a secondary resource (the engine 
-runner pod), which is created & managed by it in order to implement the reconcile functions. 
+![Litmus workflow](/images/litmus-arch_1.png)
 
-## What is a chaos engine?
+## Use cases
 
-The ChaosEngine is the core schema that defines the chaos workflow for a given application. Currently, it defines the following:
+- **For Developers**: To run chaos experiments during application development as an extension of unit testing or integration testing.
+- **For CI pipeline builders**: To run chaos as a pipeline stage to find bugs when the application is subjected to fail paths in a pipeline.
+- **For SREs**: To plan and schedule chaos experiments into the application and/or surrounding infrastructure. This practice identifies the weaknesses in the system and increases resilience.
 
-- Application info (namespace, labels, kind) of primary (AUT) and auxiliary (dependent) applications 
-- ServiceAccount used for execution of the experiment
-- Flag to turn on/off chaos annotation checks on applications
-- Chaos Experiment to be executed on the application
-- Attributes of the experiments (overrides defaults specified in the experiment CRs)
-- Flag to retain/cleanup chaos resources after experiment execution
+## Getting Started with Litmus
 
-The ChaosEngine is the referenced as the owner of the secondary (reconcile) resource with Kubernetes deletePropagation 
-ensuring these also are removed upon deletion of the ChaosEngine CR.
+[![IMAGE ALT TEXT](images/maxresdefault.jpg)](https://youtu.be/W5hmNbaYPfM)
 
-Here is a sample ChaosEngineSpec for reference: https://docs.litmuschaos.io/docs/getstarted/#prepare-chaosengine
+Check out the <a href="https://docs.litmuschaos.io/docs/next/getstarted.html" target="_blank">Litmus Docs</a> to get started.
 
-## What is a litmus chaos chart and how can I use it?
+## Contributing to Chaos Hub
 
-Litmus Chaos Charts are used to install "Chaos Experiment Bundles" & are categorized based on the nature
-of the experiments (general Kubernetes chaos, vendor/provider specific chaos - such as, OpenEBS or 
-application-specific chaos, say NuoDB). They consist of custom resources that hold low-level chaos(test) 
-parameters which are queried by the operator in order to execute the experiments. The spec.definition._fields_
-and their corresponding _values_ are used to construct the eventual execution artifact that runs the chaos 
-experiment (typically, the litmusbook, which is a K8s job resource). It also defines the permissions necessary 
-to execute the experiment.  
+Check out the <a href="https://github.com/litmuschaos/community-charts/blob/master/CONTRIBUTING.md" target="_blank">Contributing Guildelines for the Chaos Hub</a>
 
-Here is a sample ChaosEngineSpec for reference:
+## Adopters
 
-```yaml
-apiVersion: litmuschaos.io/v1alpha1
-description:
-  message: |
-    Deletes a pod belonging to a deployment/statefulset/daemonset
-kind: ChaosExperiment
-metadata:
-  name: pod-delete
-  version: 0.1.9
-spec:
-  definition:
-    scope: Namespaced
-    permissions:
-      - apiGroups:
-          - ""
-          - "apps"
-          - "batch"
-          - "litmuschaos.io"
-        resources:
-          - "deployments"
-          - "jobs"
-          - "pods"
-          - "configmaps"
-          - "chaosengines"
-          - "chaosexperiments"
-          - "chaosresults"
-        verbs:
-          - "create"
-          - "list"
-          - "get"
-          - "patch"
-          - "update"
-          - "delete"
-      - apiGroups:
-          - ""
-        resources: 
-          - "nodes"
-        verbs :
-          - "get"
-          - "list"
-    image: "litmuschaos/ansible-runner:latest"
-    args:
-    - -c
-    - ansible-playbook ./experiments/generic/pod_delete/pod_delete_ansible_logic.yml -i /etc/ansible/hosts -vv; exit 0
-    command:
-    - /bin/bash
-    env:
+Check out the <a href="https://github.com/litmuschaos/litmus/blob/master/ADOPTERS.md" target="_blank">Adopters of LitmusChaos</a>
 
-    - name: ANSIBLE_STDOUT_CALLBACK
-      value: 'default'
+(_Send a PR to the above page if you are using Litmus in your chaos engineering practice_)
 
-    - name: TOTAL_CHAOS_DURATION
-      value: '15'
+## Things to Consider
 
-    # Period to wait before injection of chaos in sec
-    - name: RAMP_TIME
-      value: ''
+Some of the considerations that need to be made with Litmus (as a chaos framework), are broadly listed here. Many of these are already being worked on
+as mentioned in the [ROADMAP](./ROADMAP.md). For details or limitations around specific experiments, refer to the respective [experiments docs](https://docs.litmuschaos.io/docs/pod-delete/).
 
-    - name: FORCE
-      value: 'true'
-
-    - name: CHAOS_INTERVAL
-      value: '5'
-
-    - name: LIB
-      value: ''    
-    labels:
-      name: pod-delete
-```
-
-## How to get started?
-
-Refer the LitmusChaos documentation [litmus docs](https://docs.litmuschaos.io)
-
-## How do I contribute?
-
-The Chaos Operator is in _alpha_ stage and needs all the help you can provide! Please contribute by raising issues, 
-improving the documentation, contributing to the core framework and tooling, etc.
-
-Head over to the [Contribution guide](CONTRIBUTING.md)
-
+- Network chaos for container runtimes other than Docker, such as containerd, CRIO is not supported yet
+- Litmus chaos operator and the chaos experiments run as kubernetes resources in the cluster. In case of airgapped environments, the chaos custom resources
+  and images need to be hosted on premise.
+- When attempting to execute platform specific chaos experiments (like those on AWS, GCP cloud) the access details are passed via kubernetes secrets. Support
+  for other modes of secret management with Litmus is yet to be tested/implemented.
+- Some chaos experiments make use of the docker api from within the experiment pods, and thereby require the docker socket to be mounted. User discretion is
+  advised when allowing developers/devops admins/SREs access for running these experiments.
+- In (rare) cases where chaos experiments make use of privileged containers, the recommended security policies will be documented.
 
 ## License
-[![FOSSA Status](https://app.fossa.io/api/projects/git%2Bgithub.com%2Flitmuschaos%2Fchaos-operator.svg?type=large)](https://app.fossa.io/projects/git%2Bgithub.com%2Flitmuschaos%2Fchaos-operator?ref=badge_large)
+
+Litmus is licensed under the Apache License, Version 2.0. See [LICENSE](./LICENSE) for the full license text. Some of the projects used by the Litmus project may be governed by a different license, please refer to its specific license.
+
+[![FOSSA Status](https://app.fossa.io/api/projects/git%2Bgithub.com%2Flitmuschaos%2Flitmus.svg?type=large)](https://app.fossa.io/projects/git%2Bgithub.com%2Flitmuschaos%2Flitmus?ref=badge_large)
+
+Litmus Chaos is part of the CNCF Projects.
+
+[![CNCF](https://github.com/cncf/artwork/blob/master/other/cncf/horizontal/color/cncf-color.png)](https://landscape.cncf.io/selected=litmus)
+
+## Community
+
+The Litmus community meets on the third wednesday of every month at 10:00PM IST/9.30 AM PST.
+
+Community Resources:
+
+- [Community Slack](https://slack.litmuschaos.io)
+- [Sync Up Meeting Link](https://zoom.us/j/91358162694)
+- [Sync Up Agenda & Meeting Notes](https://hackmd.io/a4Zu_sH4TZGeih-xCimi3Q)
+- [Youtube Channel (demos, meeting recordings, virtual meetups)](https://www.youtube.com/channel/UCa57PMqmz_j0wnteRa9nCaw)
+- [Release Tracker](https://github.com/litmuschaos/litmus/milestones)
+
+## Important Links
+
+<a href="https://docs.litmuschaos.io">
+  Litmus Docs <img src="https://avatars0.githubusercontent.com/u/49853472?s=200&v=4" alt="Litmus Docs" height="15">
+</a>
+<br>
+<a href="https://landscape.cncf.io/selected=litmus">
+  CNCF Landscape <img src="https://landscape.cncf.io/images/left-logo.svg" alt="Litmus on CNCF Landscape" height="15">
+</a>

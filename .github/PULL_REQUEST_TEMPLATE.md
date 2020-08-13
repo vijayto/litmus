@@ -1,18 +1,27 @@
-<!--  Thanks for sending a pull request!  Here are some tips for you -->
+<!--  Thanks for sending a pull request!  -->
 
-**What this PR does / why we need it**:
+## Proposed changes
 
-**Which issue this PR fixes** *(optional, in `fixes #<issue number>(, fixes #<issue_number>, ...)` format, will close that issue when PR gets merged)*: fixes #
+Summarize your changes here to communicate with the maintainers and make sure to put the link of that issue
 
-**Special notes for your reviewer**:
+## Types of changes
 
-**Checklist:**
-- [ ] Fixes #<issue number>
-- [ ] Labelled this PR & related issue with `documentation` tag
-- [ ] PR messages has document related information
-- [ ] Labelled this PR & related issue with `breaking-changes` tag
-- [ ] PR messages has breaking changes related information
-- [ ] Labelled this PR & related issue with `requires-upgrade` tag
-- [ ] PR messages has upgrade related information
-- [ ] Commit has unit tests
-- [ ] Commit has integration tests
+What types of changes does your code introduce to Litmus? Put an `x` in the boxes that apply
+- [ ] New feature (non-breaking change which adds functionality)
+- [ ] Bugfix (non-breaking change which fixes an issue)
+- [ ] Breaking change (fix or feature that would cause existing functionality to not work as expected)
+- [ ] Documentation Update (if none of the other choices applies)
+
+## Checklist
+
+Put an `x` in the boxes that apply. You can also fill these out after creating the PR. If you're unsure about any of them, don't hesitate to ask. We're here to help! This is simply a reminder of what we are going to look for before merging your code.
+- [ ] I have read the [CONTRIBUTING](https://github.com/litmuschaos/litmus/blob/master/CONTRIBUTING.md) doc
+- [ ] I have signed the commit for DCO to be passed.
+- [ ] Lint and unit tests pass locally with my changes
+- [ ] I have added tests that prove my fix is effective or that my feature works (if appropriate)
+- [ ] I have added necessary documentation (if appropriate)
+
+## Dependency
+- Please add the links to the dependent PR need to be merged before this (if any).
+
+## Special notes for your reviewer:

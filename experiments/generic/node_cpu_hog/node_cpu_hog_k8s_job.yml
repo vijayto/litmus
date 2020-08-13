@@ -44,7 +44,7 @@ spec:
 
           # provide lib image
           - name: LIB_IMAGE
-            value: 'litmuschaos/cpu:latest' 
+            value: 'litmuschaos/stress-ng:latest' 
 
           ## PERIOD TO WAIT BEFORE INJECTION OF CHAOS IN SEC
           - name: RAMP_TIME
@@ -59,6 +59,10 @@ spec:
           ## ONLY LITMUS SUPPORTED
           - name: LIB
             value: 'litmus' 
+
+          # provide the chaos namespace
+          - name: CHAOS_NAMESPACE
+            value: ''
  
           - name: CHAOS_SERVICE_ACCOUNT
             valueFrom:
